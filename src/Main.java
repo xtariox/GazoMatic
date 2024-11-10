@@ -2,13 +2,16 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Main extends JFrame {
-    private JPanel stationPanel;
+    private StationPanel stationPanel;
     private JMenuBar menuBar;
-    private  JProgressBar progressBar;
+    private  JProgressBar fuelGasGauge;
+    private GasPump gasPump;
+
     public Main() {
-        stationPanel = new JPanel();
+        stationPanel = new StationPanel();
         menuBar = new JMenuBar();
-        progressBar = new JProgressBar();
+        fuelGasGauge = new JProgressBar();
+        gasPump = new GasPump(100);
 
         // -- MENUBAR --
         JMenu start = new JMenu("start");
@@ -24,17 +27,17 @@ public class Main extends JFrame {
         // ------------------------------------------------------
 
         // -- PROGRESS BAR --
-        progressBar.setStringPainted(true); // show percentage
-        progressBar.setValue(100);
-        progressBar.setString("100%");
-        progressBar.setPreferredSize(new Dimension(1280, 30));
-        progressBar.setBackground(Color.LIGHT_GRAY);
-        progressBar.setForeground(Color.DARK_GRAY);
+        fuelGasGauge.setStringPainted(true); // show percentage
+        fuelGasGauge.setMinimum(0);
+        fuelGasGauge.setMaximum(100);
+        fuelGasGauge.setPreferredSize(new Dimension(1280, 30));
+        fuelGasGauge.setBackground(Color.LIGHT_GRAY);
+        fuelGasGauge.setForeground(Color.DARK_GRAY);
         // ------------------------------------------------------
 
         // -- STATION PANEL --
         stationPanel.setLayout(new BorderLayout());
-        stationPanel.add(progressBar, BorderLayout.SOUTH);
+        stationPanel.add(fuelGasGauge, BorderLayout.SOUTH);
         // ------------------------------------------------------
 
         this.setContentPane(stationPanel);
@@ -48,6 +51,20 @@ public class Main extends JFrame {
 
     }
 
+    // -- visually represent the fuel level of the pump on a fuel gauge, like a progress bar. --
+    public void updateFuelGauge(){
+        fuelGasGauge.setValue(gasPump.getCurrentFuelLevel());
+    }
+
+    public void dispenseFuel(int amount){
+        gasPump.dispenseFuel(amount);
+        updateFuelGauge();
+    }
+
+    public void refill(){
+        gasPump.refill();
+        updateFuelGauge();
+    }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Main());
