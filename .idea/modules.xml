@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/GasoMatic.iml" filepath="$PROJECT_DIR$/GasoMatic.iml" />
+      <module fileurl="file://$PROJECT_DIR$/GazoMatic.iml" filepath="$PROJECT_DIR$/GazoMatic.iml" />
     </modules>
   </component>
 </project>

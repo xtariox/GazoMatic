@@ -1,22 +1,18 @@
 public class GasPump {
-    private int currentFuelLevel;
-    private int maxFuelLevel;
+    private double currentFuelLevel;
+    private double maxFuelLevel;
 
-    public GasPump(int maxFuelLevel) {
+    public GasPump(double maxFuelLevel) {
         this.maxFuelLevel = maxFuelLevel;
         this.currentFuelLevel = maxFuelLevel;
-
     }
 
-    public void dispenseFuel(int amount){
+    public void dispenseFuel(double amount){
         if (currentFuelLevel - amount < 0) {
-            System.out.println("Not enough fuel");
             return;
         }
-        else{
-            currentFuelLevel -= amount;
-            System.out.println("Dispensing " + amount + " liters of fuel");
-        }
+        currentFuelLevel -= amount;
+        System.out.println("Dispensing " + amount + " liters of fuel");
     }
 
     public void refill(){
@@ -24,7 +20,7 @@ public class GasPump {
         System.out.println("Refilling fuel tank");
     }
 
-    public int getCurrentFuelLevel(){
+    public double getCurrentFuelLevel(){
         return currentFuelLevel;
     }
 }

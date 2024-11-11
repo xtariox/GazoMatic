@@ -1,17 +1,16 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Main extends JFrame {
     private StationPanel stationPanel;
     private JMenuBar menuBar;
-    private  JProgressBar fuelGasGauge;
-    private GasPump gasPump;
+    static List<AnimatedPanel> animatedPanels = new CopyOnWriteArrayList<>();
 
     public Main() {
         stationPanel = new StationPanel();
         menuBar = new JMenuBar();
-        fuelGasGauge = new JProgressBar();
-        gasPump = new GasPump(100);
 
         // -- MENUBAR --
         JMenu start = new JMenu("start");
@@ -26,48 +25,45 @@ public class Main extends JFrame {
         menuBar.setBorderPainted(false);
         // ------------------------------------------------------
 
-        // -- PROGRESS BAR --
-        fuelGasGauge.setStringPainted(true); // show percentage
-        fuelGasGauge.setMinimum(0);
-        fuelGasGauge.setMaximum(100);
-        fuelGasGauge.setPreferredSize(new Dimension(1280, 30));
-        fuelGasGauge.setBackground(Color.LIGHT_GRAY);
-        fuelGasGauge.setForeground(Color.DARK_GRAY);
-        // ------------------------------------------------------
-
-        // -- STATION PANEL --
-        stationPanel.setLayout(new BorderLayout());
-        stationPanel.add(fuelGasGauge, BorderLayout.SOUTH);
-        // ------------------------------------------------------
-
         this.setContentPane(stationPanel);
         this.setSize(1280, 720);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setJMenuBar(menuBar);
-        this.setTitle("GasoMatic");
+        this.setTitle("GazoMatic");
+        this.setResizable(false);
         this.setVisible(true);
         this.setLocationRelativeTo(null);
         stationPanel.setSize(this.getSize());
 
-    }
-
-    // -- visually represent the fuel level of the pump on a fuel gauge, like a progress bar. --
-    public void updateFuelGauge(){
-        fuelGasGauge.setValue(gasPump.getCurrentFuelLevel());
-    }
-
-    public void dispenseFuel(int amount){
-        gasPump.dispenseFuel(amount);
-        updateFuelGauge();
-    }
-
-    public void refill(){
-        gasPump.refill();
-        updateFuelGauge();
+        // -- STATION PANEL --
+        stationPanel.init();
+        // ------------------------------------------------------
     }
 
     public static void main(String[] args) {
+        // Set look and feel to the system look and feel
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Update the time every frame
+        Timer timer = new Timer(16, e -> update());
+        timer.start();
+
         SwingUtilities.invokeLater(() -> new Main());
     }
 
+    /**
+     * Update the time and all animated panels
+     */
+    private static void update() {
+        Time.update();
+        for (AnimatedPanel panel : animatedPanels) {
+            if (panel != null) {
+                panel.update();
+            }
+        }
+    }
 }
