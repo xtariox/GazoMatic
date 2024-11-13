@@ -1,3 +1,5 @@
+package com.gazomatic;
+
 public class Time {
     private static double deltaTime = 0; // in seconds
     private static long lastTime = System.nanoTime(); // in nanoseconds
@@ -11,6 +13,10 @@ public class Time {
 
     public static double getDeltaTime() {
         return paused ? 0 : deltaTime;
+    }
+
+    public static long getTime() {
+        return System.nanoTime();
     }
 
     public static void pause() {

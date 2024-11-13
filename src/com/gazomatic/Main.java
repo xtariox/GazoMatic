@@ -1,12 +1,13 @@
+package com.gazomatic;
+
+import com.gazomatic.station.StationPanel;
+
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Main extends JFrame {
     private StationPanel stationPanel;
     private JMenuBar menuBar;
-    static List<AnimatedPanel> animatedPanels = new CopyOnWriteArrayList<>();
 
     public Main() {
         stationPanel = new StationPanel();
@@ -49,21 +50,9 @@ public class Main extends JFrame {
         }
 
         // Update the time every frame
-        Timer timer = new Timer(16, e -> update());
+        Timer timer = new Timer(16, e -> Time.update());
         timer.start();
 
-        SwingUtilities.invokeLater(() -> new Main());
-    }
-
-    /**
-     * Update the time and all animated panels
-     */
-    private static void update() {
-        Time.update();
-        for (AnimatedPanel panel : animatedPanels) {
-            if (panel != null) {
-                panel.update();
-            }
-        }
+        SwingUtilities.invokeLater(Main::new);
     }
 }
