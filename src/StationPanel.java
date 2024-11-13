@@ -10,6 +10,7 @@ public class StationPanel extends AnimatedPanel {
 
     private int PUMP_X;
     private int PUMP_Y;
+    private boolean isLeavingStation = false; // Flag to track if car is leaving
 
     public StationPanel() {
         super();
@@ -25,13 +26,10 @@ public class StationPanel extends AnimatedPanel {
 
         this.setLayout(null);
         this.add(fuelGasGauge);
-        // Set the Z order of the progress bar to 0
         this.setComponentZOrder(fuelGasGauge, 0);
-        // ------------------------------------------------------
     }
 
     public void init(){
-        // Get the center of the screen
         int barWidth = 24;
         int barHeight = 96;
         int xOffset = 76;
@@ -40,11 +38,9 @@ public class StationPanel extends AnimatedPanel {
         int xc = PUMP_X - xOffset - barWidth / 2;
         int yc = PUMP_Y - barHeight / 2;
 
-        // Set the bounds of the progress bar
         fuelGasGauge.setBounds(xc, yc, barWidth, barHeight);
     }
 
-    // -- visually represent the fuel level of the pump on a fuel gauge, like a progress bar. --
     public void updateFuelGauge(){
         fuelGasGauge.setValue((int)gasPump.getCurrentFuelLevel());
     }
@@ -65,20 +61,46 @@ public class StationPanel extends AnimatedPanel {
 
     @Override
     public void update() {
-        // Check if there is no car, then create a new car
         if (car == null) {
-            // Create a new car (with a random type)
+            // Create a new car if none exists
             car = new Car(1, 100);
-            // Set the location of the car outside the screen on the right (same height as the pump)
-            car.setLocation(getWidth() / 2, PUMP_Y - getHeight() / 2);
-            // Add the car to the panel
-            this.remove(fuelGasGauge);
+            car.setLocation(getWidth(), getHeight() - car.getHeight());
             this.add(car);
-            // Set the Z order of the car to 1
             this.setComponentZOrder(car, 1);
+            car.moveTowards(PUMP_X - car.getWidth() / 2, getHeight() - car.getHeight());
+        } else {
+            car.update();
 
-            // Start the car animation
-            car.moveTowards(PUMP_X - getWidth() / 2, PUMP_Y - getHeight() / 2);
+            // Refuel the car if it's at the pump
+            refuelCar();
+
+            // Check if car should leave the station after refueling
+            if (car.getFuelLevel() == car.getFuelCapacity() && !isLeavingStation) {
+                leaveStation();
+            }
+
+            // Remove the car only when it has moved fully off-screen to the left
+            if (isLeavingStation && car.getX() < -car.getWidth()) {
+                this.remove(car);  // Remove the car from the panel
+                car = null;         // Allow a new car to be created next update
+                isLeavingStation = false;  // Reset the flag for the next car
+            }
+        }
+    }
+
+    public void refuelCar(){
+        if (car != null && car.destination == null) {
+            System.out.println("Car is at the pump and refueling.");
+            car.refuel(gasPump);
+            updateFuelGauge();
+        }
+    }
+
+    public void leaveStation(){
+        if (car != null) {
+            System.out.println("Car is full and leaving the station.");
+            car.moveTowards(-car.getWidth(), getHeight() - car.getHeight()); // Move the car to the left
+            isLeavingStation = true; // Set the flag to indicate car is leaving
         }
     }
 

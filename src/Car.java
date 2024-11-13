@@ -7,7 +7,7 @@ public class Car extends AnimatedPanel {
     private int fuelCapacity;
     private Image backgroundImage;
 
-    private Point destination = null;
+    Point destination = null;
     private double epsilon = 0.001;
 
     public Car(int type, int fuelCapacity) {
@@ -19,10 +19,18 @@ public class Car extends AnimatedPanel {
 
         // Set background image based on the type of car
         this.backgroundImage = new ImageIcon(Objects.requireNonNull(getClass().getResource("/assets/car" + type + "-nobg.png"))).getImage();
+
+        // Scale the image to make the car smaller
+        int newWidth = backgroundImage.getWidth(this) / 2;
+        int newHeight = backgroundImage.getHeight(this) / 2;
+        this.backgroundImage = backgroundImage.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+
         // Set background color to transparent
         this.setOpaque(false);
         // Set size of the car based on the background image
-        this.setSize(backgroundImage.getWidth(this), backgroundImage.getHeight(this));
+//        this.setSize(backgroundImage.getWidth(this), backgroundImage.getHeight(this));
+        this.setSize(newWidth, newHeight);
+
     }
 
     @Override
@@ -43,8 +51,6 @@ public class Car extends AnimatedPanel {
                 y += (int) (ySpeed * Math.sin(angle));
             }
         }
-
-        // Update the location of the car
         setLocation(x, y);
     }
 
@@ -59,11 +65,30 @@ public class Car extends AnimatedPanel {
         this.y = y;
     }
 
+
+    public void refuel(GasPump gasPump) {
+        double fuelNeeded = fuelCapacity - fuelLevel;
+        if (fuelNeeded > 0) {
+            double fuelDispensed = Math.min(fuelNeeded, gasPump.getCurrentFuelLevel());
+            fuelLevel += fuelDispensed;
+            gasPump.dispenseFuel(fuelDispensed);
+        }
+
+    }
+
+    public int getFuelLevel() {
+        return fuelLevel;
+    }
+
+    public int getFuelCapacity() {
+        return fuelCapacity;
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         if (backgroundImage != null) {
-            g.drawImage(backgroundImage, x, y, getWidth(), getHeight(), this);
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
         }
     }
 }
