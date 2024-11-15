@@ -20,10 +20,16 @@ public class Time {
     }
 
     public static void pause() {
+        System.out.println("Pausing time");
         paused = true;
     }
 
     public static void resume() {
+        System.out.println("Resuming time");
         paused = false;
+    }
+
+    public static boolean isPaused() {
+        return paused;
     }
 }

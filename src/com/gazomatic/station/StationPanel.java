@@ -4,10 +4,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Objects;
 import java.util.Random;
-import com.gazomatic.IAnimated;
+import com.gazomatic.IAnimatable;
 import com.gazomatic.Time;
 
-public class StationPanel extends JPanel implements IAnimated {
+public class StationPanel extends JPanel implements IAnimatable {
     private Image backgroundImage;
     private GasPump gasPump;
     private Car car;
@@ -61,27 +61,11 @@ public class StationPanel extends JPanel implements IAnimated {
         if (truck != null && truck.isAtDestination()) {
             TruckAtDestination();
         }
-
-//        // Refuel the car if it's at the pump
-//        refuelCar();
-//
-//        // Check if car should leave the station after refueling
-//        if (car.getFuelLevel() == car.getFuelCapacity() && !isLeavingStation) {
-//            leaveStation();
-//        }
-//
-//        // Remove the car only when it has moved fully off-screen to the left
-//        if (isLeavingStation && car.getX() < -car.getWidth()) {
-//            this.remove(car);  // Remove the car from the panel
-//            car = null;         // Allow a new car to be created next update
-//            isLeavingStation = false;  // Reset the flag for the next car
-//        }
     }
 
     private void handleNoCar() {
         if (gasPump.getCurrentFuelLevel() < 50 && truck == null) {
             System.out.println("Gas pump is empty. Refilling...");
-            //! Do the truck thing here
             truck = createTruck();
 
             return;

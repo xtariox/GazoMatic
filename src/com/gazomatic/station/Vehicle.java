@@ -1,21 +1,22 @@
 package com.gazomatic.station;
 
-import com.gazomatic.IAnimated;
+import com.gazomatic.IAnimatable;
+import com.gazomatic.Time;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class Vehicule extends JPanel implements IAnimated {
+public class Vehicle extends JPanel implements IAnimatable {
     int fuelLevel;
     Image backgroundImage;
 
-    private double speed = 10;
-    private static final double MAX_SPEED = 10;
-    private static final double MIN_SPEED = 1;
-    private int x = 0;
-    private int y = 0;
+    private static final double MAX_SPEED = 500;
+    private double speed = MAX_SPEED;
+    private static final double MIN_SPEED = 10;
+    private double x = 0;
+    private double y = 0;
     private Point destination = null;
-    private Point oldLocation = new Point(x, y);
+    private Point oldLocation = new Point((int)x, (int)y);
     private boolean isLeaving = false; // Flag to track if car is leaving (will be set to true when after the first stop)
 
 
@@ -26,7 +27,7 @@ public class Vehicule extends JPanel implements IAnimated {
         }
 
         // The smallest possible distance the car can move in one frame
-        double EPSILON = Math.max(MIN_SPEED, speed);
+        double EPSILON = Math.max(MIN_SPEED, speed) * Time.getDeltaTime();
         // if the car is not stationary, then move at max speed towards the destination and decelerate when close
         // if the car is stationary, then accelerate towards the destination (without decelerating when close to the destination)
         double distance = destination.distance(x, y);
@@ -36,7 +37,7 @@ public class Vehicule extends JPanel implements IAnimated {
             moveTowardsDestination(distance);
         }
         // Update the location of the car
-        setLocation(x, y);
+        setLocation((int)x, (int)y);
     }
 
     private void moveTowardsDestination(double distance) {
@@ -44,9 +45,11 @@ public class Vehicule extends JPanel implements IAnimated {
         double dy = destination.y - y; // Distance in y direction
         double angle = Math.atan2(dy, dx);
 
+        double DELTA_TIME = Time.getDeltaTime();
+
         // Move the car towards the destination
-        x += (int) (speed * Math.cos(angle));
-        y += (int) (speed * Math.sin(angle));
+        x += speed * Math.cos(angle) * DELTA_TIME;
+        y += speed * Math.sin(angle) * DELTA_TIME;
 
         if (isLeaving) {
             // Accelerate towards the destination based on the distance between the car and the old location
@@ -61,7 +64,7 @@ public class Vehicule extends JPanel implements IAnimated {
     private void arriveAtDestination() {
         x = destination.x;
         y = destination.y;
-        oldLocation = new Point(x, y);
+        oldLocation = new Point((int)x, (int)y);
         destination = null;
         speed = 0;
         isLeaving = true;

@@ -14,13 +14,23 @@ public class Main extends JFrame {
         menuBar = new JMenuBar();
 
         // -- MENUBAR --
-        JMenu start = new JMenu("start");
+        JMenu resume = new JMenu("resume");
         JMenu pause = new JMenu("pause");
-        JMenu reset = new JMenu("reset");
 
-        menuBar.add(start);
+        resume.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                Time.resume();
+            }
+        });
+
+        pause.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                Time.pause();
+            }
+        });
+
+        menuBar.add(resume);
         menuBar.add(pause);
-        menuBar.add(reset);
 
         menuBar.setBackground(Color.LIGHT_GRAY);
         menuBar.setBorderPainted(false);

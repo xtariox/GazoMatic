@@ -1,10 +1,10 @@
 package com.gazomatic.station;
 
-import com.gazomatic.IAnimated;
+import com.gazomatic.IAnimatable;
 
 import javax.swing.*;
 
-public class GasPump extends JProgressBar implements IAnimated {
+public class GasPump extends JProgressBar implements IAnimatable {
     private int currentFuelLevel;
     private int maxFuelLevel;
 
@@ -27,11 +27,6 @@ public class GasPump extends JProgressBar implements IAnimated {
     public void refill(){
         System.out.println("Refilling fuel tank");
         currentFuelLevel = maxFuelLevel;
-        updateFuelLevel();
-    }
-
-    public void updateFuelLevel() {
-        setValue(currentFuelLevel);
     }
 
     public int getCurrentFuelLevel() {
@@ -46,9 +41,10 @@ public class GasPump extends JProgressBar implements IAnimated {
     public void update() {
         // Animate the fuel level change
         if (currentFuelLevel < getValue()) {
-            setValue(getValue() - 1);
+            // Increase the fuel level (multiply by delta time to make it frame rate independent)
+            setValue((getValue() - 1));
         } else if (currentFuelLevel > getValue()) {
-            setValue(getValue() + 1);
+            setValue((getValue() + 1));
         }
     }
 }

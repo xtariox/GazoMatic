@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="GazoMatic:jar">
+    <output-path>$PROJECT_DIR$/out</output-path>
+    <root id="archive" name="GazoMatic.jar">
+      <element id="module-output" name="GazoMatic" />
+    </root>
+  </artifact>
+</component>

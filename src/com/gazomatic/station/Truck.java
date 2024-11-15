@@ -1,12 +1,10 @@
 package com.gazomatic.station;
 
-import com.gazomatic.IAnimated;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.Objects;
 
-public class Truck extends Vehicule {
+public class Truck extends Vehicle {
 
     private final GasPump gasPump;
 
