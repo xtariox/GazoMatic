@@ -11,12 +11,15 @@ public class StationPanel extends JPanel implements IAnimated {
     private Image backgroundImage;
     private GasPump gasPump;
     private Car car;
-
+    private Truck truck;
     private int PUMP_X;
     private int PUMP_Y;
     private int CAR_Y;
+    private int TRUCK_Y;
     private boolean isLeavingStation = false; // Flag to track if car is leaving
+    private boolean TruckisLeavingStation = false; // Flag to track if truck is leaving
     private boolean isRefueling = false; // Flag to track if car is refueling
+    private boolean isTruckRefilling = false; // Flag to track if truck is refilling
     private int LAST_CAR = -1; // The last car type
 
     public StationPanel() {
@@ -36,11 +39,12 @@ public class StationPanel extends JPanel implements IAnimated {
         PUMP_X = getWidth() / 2;
         PUMP_Y = getHeight() / 3 + 128;
         CAR_Y = PUMP_Y - 72;
+        TRUCK_Y = PUMP_Y - 370;
 
         int xc = PUMP_X - xOffset - barWidth / 2;
         int yc = PUMP_Y - barHeight / 2;
 
-        gasPump.setBounds(xc, yc, barWidth, barHeight);
+        gasPump.setBounds(xc, yc, barWidth, barHeight); //
 
         // Start the thread to update the station panel
         Thread thread = new Thread(this);
@@ -53,6 +57,9 @@ public class StationPanel extends JPanel implements IAnimated {
             handleNoCar();
         } else if (car.isAtDestination()) {
             handleCarAtDestination();
+        }
+        if (truck != null && truck.isAtDestination()) {
+            TruckAtDestination();
         }
 
 //        // Refuel the car if it's at the pump
@@ -72,14 +79,17 @@ public class StationPanel extends JPanel implements IAnimated {
     }
 
     private void handleNoCar() {
-        if (gasPump.getCurrentFuelLevel() < 50) {
+        if (gasPump.getCurrentFuelLevel() < 50 && truck == null) {
             System.out.println("Gas pump is empty. Refilling...");
             //! Do the truck thing here
+            truck = createTruck();
 
             return;
         }
+        if (truck == null && car == null) {
+            car = createNewCar();
+        }
 
-        car = createNewCar();
     }
 
     private Car createNewCar() {
@@ -144,6 +154,48 @@ public class StationPanel extends JPanel implements IAnimated {
             isLeavingStation = true;
         }
     }
+
+    public Truck createTruck() {
+        truck = new Truck(gasPump);
+        truck.setLocation(getWidth(), TRUCK_Y);
+        this.add(truck);
+        this.setComponentZOrder(truck, 1);
+        truck.moveTowards(PUMP_X - truck.getWidth() / 2, TRUCK_Y);
+
+        Thread thread = new Thread(truck);
+        thread.start();
+        return truck;
+    }
+
+    public void TruckAtDestination() {
+        if (TruckisLeavingStation) {
+            removeTruck();
+        } else {
+            if (!isTruckRefilling) {
+                truck.refillStation(gasPump);
+                isTruckRefilling = true;
+            }
+            if (isTruckRefilling && gasPump.isDoneUpdating()) {
+                isTruckRefilling = false;
+                TruckLeaving();
+            }
+        }
+    }
+
+    public void TruckLeaving() {
+        if (truck != null) {
+            System.out.println("Truck is done and leaving the station.");
+            truck.moveTowards(-truck.getWidth(), TRUCK_Y);
+            TruckisLeavingStation = true;
+        }
+    }
+
+    public void removeTruck() {
+        this.remove(truck);
+        truck = null;
+        TruckisLeavingStation = false;
+    }
+
 
     @Override
     protected void paintComponent(Graphics g) {
